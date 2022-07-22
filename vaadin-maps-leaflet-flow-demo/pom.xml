@@ -28,11 +28,11 @@
 	<properties>
 		<license.licenseName>apache_v2</license.licenseName>
 
-		<javaVersion>1.8</javaVersion>
-		<maven.compiler.source>${javaVersion}</maven.compiler.source>
-		<maven.compiler.target>${javaVersion}</maven.compiler.target>
-		<!-- Used for Java 11 -->
-		<!--<maven.compiler.release>${javaVersion}</maven.compiler.release> -->
+		<java.version>11</java.version>
+
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<maven.compiler.release>${java.version}</maven.compiler.release>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
