@@ -23,6 +23,7 @@
 - Removed the deprecated function `LMap#getItems()`
 - Removed the function `LMap#getComponents()`
 - Removed the deprecated function `LMap#removeItem(LComponent...)`
+- Removed marker click listener from `LMap`
 
 ### Fixed
 
