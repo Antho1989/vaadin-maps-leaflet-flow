@@ -80,6 +80,12 @@ export class LeafletMap extends PolymerElement {
         ).addTo(this.map);
 
         this.items = new Array();
+
+        let vaadinServer = this.$server;
+
+        this.map.on('click', function (e) {
+            vaadinServer.onMapClick(e.latlng.lat, e.latlng.lng);
+        });
     }
 
     addMarker(obj) {
@@ -93,7 +99,7 @@ export class LeafletMap extends PolymerElement {
         var item = L.marker(obj.geometry.coordinates, {icon: leafIcon}).addTo(this.map);
        
         if (obj.properties.popup != null) {
-            item.bindPopup(obj.properties.popup);
+            item.bindPopup(obj.properties.popup, {closeButton: false});
         }
 		
         if (obj.tag != "empty") {
@@ -119,11 +125,22 @@ export class LeafletMap extends PolymerElement {
         );
 
         if (obj.properties.popup != null) {
-            item.bindPopup(obj.properties.popup);
+	        item.bindPopup(obj.properties.popup, {closeButton: false});
         }
 
         this.items.push(item);
     }
+
+	addPolyline(obj) {
+		let item = L.polyline(obj.geometry.coordinates, obj.properties)
+			.addTo(this.map);
+
+		if (obj.properties.popup != null) {
+			item.bindPopup(obj.properties.popup, {closeButton: false});
+		}
+
+		this.items.push(item);
+	}
 
     addCircle(obj) {
         var item = L.circle(obj.geometry.coords, obj.properties).addTo(this.map);
@@ -133,6 +150,11 @@ export class LeafletMap extends PolymerElement {
 
         this.items.push(item);
     }
+
+	openPopup(index) {
+		this.items[index].openPopup();
+	}
+
 }
 
 customElements.define("leaflet-map", LeafletMap);

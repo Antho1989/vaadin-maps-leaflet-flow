@@ -33,6 +33,7 @@ public class LIcon
 	private String type;
 	private String iconUrl;
 	
+	// TODO: leaflet expects null value if no size, not an empty list, causes a "Invalid LatLng object" error
 	@JsonInclude(Include.NON_NULL)
 	private final List<Integer> iconSize = new ArrayList<>();
 	private final List<Integer> iconAnchor = new ArrayList<>();
@@ -47,6 +48,7 @@ public class LIcon
 		this.setPopupAnchor(1, -34);
 		this.setShadowSize(41, 41);
 		this.setShadowAnchor(12, 41);
+		this.setIconSize(25, 41);
 		this.iconUrl = "https://unpkg.com/leaflet@1.6.0/dist/images/marker-icon.png";
 		this.shadowUrl = "https://unpkg.com/leaflet@1.6.0/dist/images/marker-shadow.png";
 		this.type = "Icon";
@@ -59,6 +61,7 @@ public class LIcon
 		this.setPopupAnchor(0, 0);
 		this.setShadowSize(0, 0);
 		this.setShadowAnchor(0, 0);
+		this.setIconSize(0, 0);
 		this.iconUrl = url;
 		this.type = "Icon";
 		
