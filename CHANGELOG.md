@@ -7,6 +7,7 @@
 - Added on map click event support
 - Added `LMap#openPopup(LMarker)`
 - Added polylines
+- Added `LMap#containsLComponent(LComponent)`
 
 ### Changed
 
@@ -17,6 +18,10 @@
 - Removed the deprecated default constructor for `LMap`
 - Removed the close button on the popups, it redirects to `/#close` instead
   of `#close` because of Vaadin
+- Removed the deprecated function `LMap#addLComponent(LComponent...)`
+- Removed the deprecated function `LMap#getItems()`
+- Removed the function `LMap#getComponents()`
+- Removed the deprecated function `LMap#removeItem(LComponent...)`
 
 ### Fixed
 

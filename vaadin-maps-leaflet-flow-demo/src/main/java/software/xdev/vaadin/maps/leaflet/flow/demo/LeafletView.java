@@ -37,11 +37,13 @@ public class LeafletView extends VerticalLayout
 		icoClose.addClickListener(iev -> dialog.close());
 	});
 	private final Button btnOpenZobPopup = new Button("Open ZoB popup");
+	private final Button btnAddRemove = new Button("Add/remove marker");
 
 	private LMap map;
 
 	private LMarker markerZob;
 	private LMarker markerRathaus;
+	private LMarker markerNoTag;
 
 	private LCircle circleRange;
 	private LMarker markerPizza;
@@ -55,11 +57,13 @@ public class LeafletView extends VerticalLayout
 	{
 		this.btnLunch.addClickListener(this::btnLunchClick);
 		this.btnOpenZobPopup.addClickListener(event -> map.openPopup(markerZob));
+		this.btnAddRemove.addClickListener(this::btnAddRemoveClick);
 
 		this.add(new HorizontalLayout(
 				this.btnLunch,
 				this.btnOpenDialog,
-				this.btnOpenZobPopup
+				this.btnOpenZobPopup,
+				this.btnAddRemove
 		));
 
 		this.initMapComponents();
@@ -86,6 +90,18 @@ public class LeafletView extends VerticalLayout
 		this.btnLunch.setText(this.viewLunch ? "Go back to the normal view" : "Where do XDEV employees go for lunch?");
 	}
 
+	private void btnAddRemoveClick(ClickEvent<Button> event)
+	{
+		if (map.containsLComponent(markerNoTag))
+		{
+			map.removeLComponents(markerNoTag);
+		}
+		else
+		{
+			map.addLComponents(markerNoTag);
+		}
+	}
+
 	private void initMapComponents()
 	{
 		this.markerZob = new LMarker(49.673470, 12.160108, "ZoB");
@@ -94,7 +110,7 @@ public class LeafletView extends VerticalLayout
 		final LMarker markerXDev = new LMarker(49.675806677512824, 12.160990185846394);
 		final LIcon xDevLogo = new LIcon("https://www.xing.com/img/custom/communities/communities_files/f/f/6/32758/large/XDEV_600x600_red.png?1438789458");
 
-		final LMarker markerNoTag = new LMarker(49.675328, 12.162112);
+		markerNoTag = new LMarker(49.675328, 12.162112);
 
 		// other option:
 		// xDevLogo.setIconUrl(

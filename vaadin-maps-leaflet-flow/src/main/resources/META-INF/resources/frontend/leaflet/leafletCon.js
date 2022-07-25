@@ -79,7 +79,7 @@ export class LeafletMap extends PolymerElement {
             }
         ).addTo(this.map);
 
-        this.items = new Array();
+	    this.items = {};
 
         let vaadinServer = this.$server;
 
@@ -88,50 +88,50 @@ export class LeafletMap extends PolymerElement {
         });
     }
 
-    addMarker(obj) {
-      
-        var leafIcon;
-        if (obj.properties.icon.type == 'DivIcon') {
-            leafIcon = new L.divIcon(obj.properties.icon);
-        } else {
-            leafIcon = new L.Icon(obj.properties.icon);
-        }    
-        var item = L.marker(obj.geometry.coordinates, {icon: leafIcon}).addTo(this.map);
-       
-        if (obj.properties.popup != null) {
-            item.bindPopup(obj.properties.popup, {closeButton: false});
-        }
-		
-        if (obj.tag != "empty") {
-        	var vaadinServer = this.$server;  
-			
-            item.on('click', function (e) {
-                vaadinServer.onMarkerClick(obj.tag);
-            });
-        }
+	addMarker(id, obj) {
+		let leafIcon;
 
-        this.items.push(item);
-    }
+		if (obj.properties.icon.type === 'DivIcon') {
+			leafIcon = new L.divIcon(obj.properties.icon);
+		} else {
+			leafIcon = new L.Icon(obj.properties.icon);
+		}
 
-    deleteItem(index) {
-        var delItem = this.items[index];
-        delItem.remove();
-        this.items.splice(index, 1);
-    }
+		let item = L.marker(obj.geometry.coordinates, {icon: leafIcon})
+			.addTo(this.map);
 
-    addPolygon(obj) {
-        var item = L.polygon(obj.geometry.coordinates, obj.properties).addTo(
-            this.map
-        );
+		if (obj.properties.popup != null) {
+			item.bindPopup(obj.properties.popup, {closeButton: false});
+		}
 
-        if (obj.properties.popup != null) {
-	        item.bindPopup(obj.properties.popup, {closeButton: false});
-        }
+		if (obj.tag !== "empty") {
+			var vaadinServer = this.$server;
 
-        this.items.push(item);
-    }
+			item.on('click', function (e) {
+				vaadinServer.onMarkerClick(obj.tag);
+			});
+		}
 
-	addPolyline(obj) {
+		this.items[id] = item;
+	}
+
+	deleteItem(id) {
+		this.items[id].remove();
+		delete this.items[id];
+	}
+
+	addPolygon(id, obj) {
+		let item = L.polygon(obj.geometry.coordinates, obj.properties)
+			.addTo(this.map);
+
+		if (obj.properties.popup != null) {
+			item.bindPopup(obj.properties.popup, {closeButton: false});
+		}
+
+		this.items[id] = item;
+	}
+
+	addPolyline(id, obj) {
 		let item = L.polyline(obj.geometry.coordinates, obj.properties)
 			.addTo(this.map);
 
@@ -139,20 +139,22 @@ export class LeafletMap extends PolymerElement {
 			item.bindPopup(obj.properties.popup, {closeButton: false});
 		}
 
-		this.items.push(item);
+		this.items[id] = item;
 	}
 
-    addCircle(obj) {
-        var item = L.circle(obj.geometry.coords, obj.properties).addTo(this.map);
-        if (obj.properties.popup != null) {
-            item.bindPopup(obj.properties.popup);
-        }
+	addCircle(id, obj) {
+		let item = L.circle(obj.geometry.coords, obj.properties)
+			.addTo(this.map);
 
-        this.items.push(item);
-    }
+		if (obj.properties.popup != null) {
+			item.bindPopup(obj.properties.popup);
+		}
 
-	openPopup(index) {
-		this.items[index].openPopup();
+		this.items[id] = item;
+	}
+
+	openPopup(id) {
+		this.items[id].openPopup();
 	}
 
 }

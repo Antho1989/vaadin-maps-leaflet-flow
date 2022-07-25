@@ -29,10 +29,11 @@ import software.xdev.vaadin.maps.leaflet.flow.data.LComponent;
 import software.xdev.vaadin.maps.leaflet.flow.data.LMarker;
 import software.xdev.vaadin.maps.leaflet.flow.data.LTileLayer;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @NpmPackage(value = "leaflet", version = "^1.6.0")
 @Tag("leaflet-map")
@@ -46,7 +47,11 @@ public class LMap extends Component implements HasSize, HasStyle
 	private static final String SET_ZOOM_FUNCTION = "setZoomLevel";
 
 	private LCenter center;
-	private final List<LComponent> components = new ArrayList<>();
+
+	private final Map<Integer, LComponent> components = new HashMap<>();
+	private final Map<LComponent, Integer> componentIds = new HashMap<>();
+
+	private final AtomicInteger nextComponentId = new AtomicInteger(1);
 
 	public LMap(final double lat, final double lon, final int zoom)
 	{
@@ -80,16 +85,38 @@ public class LMap extends Component implements HasSize, HasStyle
 		this.getStyle().set("z-index", enabled ? "1" : null);
 	}
 
-	/**
-	 * add Leaflet component(s) to the map
-	 *
-	 * @param lObjects
-	 * @deprecated Use {@link LMap#addLComponents(LComponent...)} instead
-	 */
-	@Deprecated
-	public void addLComponent(final LComponent... lObjects)
+	public boolean containsLComponent(final LComponent lComponent)
 	{
-		this.addLComponents(lObjects);
+		return componentIds.containsKey(lComponent);
+	}
+
+	private int addComponent(final LComponent lComponent)
+	{
+		if (componentIds.containsKey(lComponent))
+			throw new IllegalArgumentException("Component already added to this map");
+
+		final int id = nextComponentId.getAndIncrement();
+		components.put(id, lComponent);
+		componentIds.put(lComponent, id);
+		return id;
+	}
+
+	private int removeComponent(final LComponent lComponent)
+	{
+		if (!containsLComponent(lComponent))
+			throw new IllegalArgumentException("Component not in this map");
+
+		final int id = componentIds.remove(lComponent);
+		components.remove(id);
+		return id;
+	}
+
+	private int getComponentId(final LComponent lComponent)
+	{
+		if (!containsLComponent(lComponent))
+			throw new IllegalArgumentException("Component not in this map");
+
+		return componentIds.get(lComponent);
 	}
 
 	/**
@@ -117,22 +144,12 @@ public class LMap extends Component implements HasSize, HasStyle
 
 	protected void addLComponent(final LComponent lComponent)
 	{
-		this.getComponents().add(lComponent);
-		this.getElement().callJsFunction(lComponent.getJsFunctionForAddingToMap(), lComponent.toJson());
+		this.getElement().callJsFunction(
+				lComponent.getJsFunctionForAddingToMap(),
+				addComponent(lComponent),
+				lComponent.toJson()
+		);
 	}
-
-	/**
-	 * Removes a map item
-	 *
-	 * @param items
-	 * @deprecated Use {@link LMap#removeLComponents(LComponent...)}
-	 */
-	@Deprecated
-	public void removeItem(final LComponent... items)
-	{
-		this.removeLComponents(items);
-	}
-
 
 	/**
 	 * remove Leaflet component(s) to the map
@@ -159,32 +176,7 @@ public class LMap extends Component implements HasSize, HasStyle
 
 	protected void removeLComponent(final LComponent lComponent)
 	{
-		final int index = this.components.indexOf(lComponent);
-
-		if (index != -1 && this.components.remove(lComponent))
-		{
-			this.getElement().callJsFunction(DELETE_FUNCTION, index);
-		}
-	}
-
-	/**
-	 * @return
-	 * @deprecated Use {@link LMap#getComponents()}
-	 */
-	@Deprecated
-	public List<LComponent> getItems()
-	{
-		return this.components;
-	}
-
-	/**
-	 * Returns a new component list
-	 *
-	 * @return
-	 */
-	public List<LComponent> getComponents()
-	{
-		return this.components;
+		this.getElement().callJsFunction(DELETE_FUNCTION, removeComponent(lComponent));
 	}
 
 	public LCenter getCenter()
@@ -271,12 +263,7 @@ public class LMap extends Component implements HasSize, HasStyle
 	 */
 	public void openPopup(LMarker marker)
 	{
-		final int index = this.components.indexOf(marker);
-
-		if (index != -1)
-		{
-			this.getElement().callJsFunction("openPopup", index);
-		}
+		this.getElement().callJsFunction("openPopup", getComponentId(marker));
 	}
 
 }
