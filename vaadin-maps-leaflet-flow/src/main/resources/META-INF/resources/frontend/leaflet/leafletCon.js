@@ -1,92 +1,96 @@
-import {html,PolymerElement} from "@polymer/polymer/polymer-element.js";
+import {html, PolymerElement} from "@polymer/polymer/polymer-element.js";
 import "leaflet/dist/leaflet.js";
 
 export class LeafletMap extends PolymerElement {
-    static get template() {
-        return html `
-      <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
-      />
+	static get template() {
+		return html`
+			<link
+					rel="stylesheet"
+					href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+			/>
 
-      <style>
-        #map-container {
-          width: 100%;
-          height: 100%;
-        }
-        #divMap {
-          width: 100%;
-          height: 100%;
-        }
-        .div-icon {
-        	background: #fff;
-        	border: 1px solid #666;
-        	height: auto;
-        	width: auto;
-        	padding-left: 5px;
-        	padding-right: 5px;
-        	white-space: nowrap;
-        }
-      </style>
-      <div id="divMap"></div>
-    `;
-    }
+			<style>
+				#map-container {
+					width: 100%;
+					height: 100%;
+				}
 
-    static get properties() {
-        return {
-            map: {
-                type: Object,
-                notify: true
-            },
-            items: {
-                type: Array,
-                notify: true
-            },
-            tile: {
-                type: Object,
-                notify: true
-            }
-        };
-    }
+				#divMap {
+					width: 100%;
+					height: 100%;
+				}
 
-    ready() {
-        this._initMap();
-    }
+				.div-icon {
+					background: #fff;
+					border: 1px solid #666;
+					height: auto;
+					width: auto;
+					padding-left: 5px;
+					padding-right: 5px;
+					white-space: nowrap;
+				}
+			</style>
+			<div id="divMap"></div>
+		`;
+	}
 
-    setViewPoint(obj) {
-        this.map.setView(obj.point.coordinates, obj.point.zoom);
-    }
-    
-    setTileLayer(layer)
-    {     
-        this.tile = L.tileLayer(layer.tile.link,{attribution: layer.tile.attribution, maxZoom: layer.tile.zoom, id: layer.tile.id}).addTo(this.map);
-        this.tile.bringToFront();
-    }
+	static get properties() {
+		return {
+			map: {
+				type: Object,
+				notify: true
+			},
+			items: {
+				type: Array,
+				notify: true
+			},
+			tile: {
+				type: Object,
+				notify: true
+			}
+		};
+	}
 
-    setZoomLevel(zoom)
-    {
-        this.map.setZoom(zoom);
-    }
+	ready() {
+		this._initMap();
+	}
 
-    _initMap() {
-        super.ready();
-        this.map = new L.map(this.$.divMap);
+	setViewPoint(obj) {
+		this.map.setView(obj.point.coordinates, obj.point.zoom);
+	}
 
-        this.tile = L.tileLayer(
-            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-                maxZoom: 18
-            }
-        ).addTo(this.map);
+	setTileLayer(layer) {
+		this.tile = L.tileLayer(layer.tile.link, {
+			attribution: layer.tile.attribution,
+			maxZoom: layer.tile.zoom,
+			id: layer.tile.id
+		}).addTo(this.map);
+		this.tile.bringToFront();
+	}
 
-	    this.items = {};
+	setZoomLevel(zoom) {
+		this.map.setZoom(zoom);
+	}
 
-        let vaadinServer = this.$server;
+	_initMap() {
+		super.ready();
+		this.map = new L.map(this.$.divMap);
 
-        this.map.on('click', function (e) {
-            vaadinServer.onMapClick(e.latlng.lat, e.latlng.lng);
-        });
-    }
+		this.tile = L.tileLayer(
+			"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+				attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+				maxZoom: 18
+			}
+		).addTo(this.map);
+
+		this.items = {};
+
+		let vaadinServer = this.$server;
+
+		this.map.on('click', function (e) {
+			vaadinServer.onMapClick(e.latlng.lat, e.latlng.lng);
+		});
+	}
 
 	addMarker(id, obj) {
 		let leafIcon;
@@ -104,20 +108,9 @@ export class LeafletMap extends PolymerElement {
 			item.bindPopup(obj.properties.popup, {closeButton: false});
 		}
 
-		if (obj.tag !== "empty") {
-			var vaadinServer = this.$server;
-
-			item.on('click', function (e) {
-				vaadinServer.onMarkerClick(obj.tag);
-			});
-		}
+		this.addListenerToEvented(id, item);
 
 		this.items[id] = item;
-	}
-
-	deleteItem(id) {
-		this.items[id].remove();
-		delete this.items[id];
 	}
 
 	addPolygon(id, obj) {
@@ -127,6 +120,8 @@ export class LeafletMap extends PolymerElement {
 		if (obj.properties.popup != null) {
 			item.bindPopup(obj.properties.popup, {closeButton: false});
 		}
+
+		this.addListenerToEvented(id, item);
 
 		this.items[id] = item;
 	}
@@ -139,6 +134,8 @@ export class LeafletMap extends PolymerElement {
 			item.bindPopup(obj.properties.popup, {closeButton: false});
 		}
 
+		this.addListenerToEvented(id, item);
+
 		this.items[id] = item;
 	}
 
@@ -150,7 +147,23 @@ export class LeafletMap extends PolymerElement {
 			item.bindPopup(obj.properties.popup);
 		}
 
+		this.addListenerToEvented(id, item);
+
 		this.items[id] = item;
+	}
+
+	addListenerToEvented(id, evented) {
+		let vaadinServer = this.$server;
+
+		evented.on('click', function (e) {
+			vaadinServer.onComponentEvent(id, e.type);
+			vaadinServer.onMapClick(e.latlng.lat, e.latlng.lng);
+		});
+	}
+
+	deleteItem(id) {
+		this.items[id].remove();
+		delete this.items[id];
 	}
 
 	openPopup(id) {

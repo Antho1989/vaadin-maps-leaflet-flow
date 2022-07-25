@@ -21,55 +21,53 @@ package software.xdev.vaadin.maps.leaflet.flow.data;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import elemental.json.Json;
 import elemental.json.JsonObject;
 
+import java.util.ArrayList;
+import java.util.List;
 
-public class LPolygon implements LComponent
+
+public class LPolygon extends LEvented
 {
 	private final LPolygonGeometry geometry;
 	private final LPolygonOptions properties;
-	
+
 	public LPolygon(final LPoint... points)
 	{
 		final List<List<Double>> posis = new ArrayList<>();
 		this.properties = new LPolygonOptions();
-		for(final LPoint p : points)
+		for (final LPoint p : points)
 		{
 			posis.add(p.getCoords());
 		}
 		this.geometry = new LPolygonGeometry("Polygon", posis);
 	}
-	
+
 	/**
 	 * Create a new Polygon for marking a area on the map
 	 *
-	 * @param points
-	 *            List of points to draw the Polygon
+	 * @param points List of points to draw the Polygon
 	 */
 	public LPolygon(final List<LPoint> points)
 	{
 		final List<List<Double>> posis = new ArrayList<>();
-		for(final LPoint p : points)
+		for (final LPoint p : points)
 		{
 			posis.add(p.getCoords());
 		}
-		
+
 		this.properties = new LPolygonOptions();
 		this.geometry = new LPolygonGeometry("Polygon", posis);
 	}
-	
+
 	public boolean isStroke()
 	{
 		return this.properties.isStroke();
 	}
-	
+
 	/**
 	 * Draws a border, default is true.
 	 *
@@ -79,12 +77,12 @@ public class LPolygon implements LComponent
 	{
 		this.properties.setStroke(stroke);
 	}
-	
+
 	public String getStrokeColor()
 	{
 		return this.properties.getColor();
 	}
-	
+
 	/**
 	 * Set a Color to the border.
 	 *
@@ -94,12 +92,12 @@ public class LPolygon implements LComponent
 	{
 		this.properties.setColor(strokeColor);
 	}
-	
+
 	public double getStrokeOpacity()
 	{
 		return this.properties.getOpacity();
 	}
-	
+
 	/**
 	 * Sets the opacity of the border.
 	 *
@@ -109,12 +107,12 @@ public class LPolygon implements LComponent
 	{
 		this.properties.setOpacity(strokeOpacity);
 	}
-	
+
 	public int getStrokeWeight()
 	{
 		return this.properties.getWeight();
 	}
-	
+
 	/**
 	 * Sets the width of the border.
 	 *
@@ -124,12 +122,12 @@ public class LPolygon implements LComponent
 	{
 		this.properties.setWeight(strokeWeight);
 	}
-	
+
 	public String getLineJoin()
 	{
 		return this.properties.getLineJoin();
 	}
-	
+
 	/**
 	 * A string that defines shape to be used at the corners of the stroke.<br>
 	 * <li>miter</li>
@@ -144,12 +142,12 @@ public class LPolygon implements LComponent
 	{
 		this.properties.setLineJoin(lineJoin);
 	}
-	
+
 	public String getDashArray()
 	{
 		return this.properties.getDashArray();
 	}
-	
+
 	/**
 	 * A string that defines the stroke dash pattern.<br>
 	 * For example: "2 1 3 1 2"
@@ -160,12 +158,12 @@ public class LPolygon implements LComponent
 	{
 		this.properties.setDashArray(dashArray);
 	}
-	
+
 	public String getDashOffset()
 	{
 		return this.properties.getDashOffset();
 	}
-	
+
 	/**
 	 * A string that defines the distance into the dash pattern to start the dash.<br>
 	 * For example: "2" - The start of the dash array computation is pulled by 3 user units
@@ -176,12 +174,12 @@ public class LPolygon implements LComponent
 	{
 		this.properties.setDashOffset(dashOffset);
 	}
-	
+
 	public boolean isFill()
 	{
 		return this.properties.isFill();
 	}
-	
+
 	/**
 	 * Whether to fill the path with color. Set it to false to disable filling.
 	 *
@@ -191,12 +189,12 @@ public class LPolygon implements LComponent
 	{
 		this.properties.setFill(fill);
 	}
-	
+
 	public String getFillColor()
 	{
 		return this.properties.getFillColor();
 	}
-	
+
 	/**
 	 * Fill color.
 	 *
@@ -206,12 +204,12 @@ public class LPolygon implements LComponent
 	{
 		this.properties.setFillColor(fillColor);
 	}
-	
+
 	public double getFillOpacity()
 	{
 		return this.properties.getFillOpacity();
 	}
-	
+
 	/**
 	 * Fill opacity.
 	 *
@@ -221,12 +219,12 @@ public class LPolygon implements LComponent
 	{
 		this.properties.setFillOpacity(fillOpacity);
 	}
-	
+
 	public String getPopup()
 	{
 		return this.properties.getPopup();
 	}
-	
+
 	/**
 	 * Set Pop-up message.
 	 *
@@ -236,12 +234,12 @@ public class LPolygon implements LComponent
 	{
 		this.properties.setPopup(popup);
 	}
-	
+
 	public String getFillRule()
 	{
 		return this.properties.getFillRule();
 	}
-	
+
 	/**
 	 * A string that defines how the inside of a shape is determined.<br>
 	 * <li>evenodd</li>
@@ -253,12 +251,12 @@ public class LPolygon implements LComponent
 	{
 		this.properties.setFillRule(fillRule);
 	}
-	
+
 	public boolean isNoClip()
 	{
 		return this.properties.isNoClip();
 	}
-	
+
 	/**
 	 * Disable polyline clipping.
 	 *
@@ -268,12 +266,12 @@ public class LPolygon implements LComponent
 	{
 		this.properties.setNoClip(noClip);
 	}
-	
+
 	public double getSmoothFactor()
 	{
 		return this.properties.getSmoothFactor();
 	}
-	
+
 	/**
 	 * How much to simplify the polyline on each zoom level.<br>
 	 * More means better performance and smoother look, and less means more accurate representation.
@@ -284,7 +282,7 @@ public class LPolygon implements LComponent
 	{
 		this.properties.setSmoothFactor(smoothFactor);
 	}
-	
+
 	@Override
 	public JsonObject toJson()
 	{
@@ -296,11 +294,11 @@ public class LPolygon implements LComponent
 			jsonObject.put("geometry", Json.parse(mapper.writeValueAsString(this.geometry)));
 			jsonObject.put("properties", Json.parse(mapper.writeValueAsString(this.properties)));
 		}
-		catch(final JsonProcessingException e)
+		catch (final JsonProcessingException e)
 		{
 			throw new RuntimeException(e);
 		}
-		
+
 		return jsonObject;
 	}
 
@@ -309,5 +307,5 @@ public class LPolygon implements LComponent
 	{
 		return "addPolygon";
 	}
-	
+
 }

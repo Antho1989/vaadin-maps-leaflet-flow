@@ -8,6 +8,7 @@
 - Added `LMap#openPopup(LMarker)`
 - Added polylines
 - Added `LMap#containsLComponent(LComponent)`
+- Added on component click event support
 
 ### Changed
 

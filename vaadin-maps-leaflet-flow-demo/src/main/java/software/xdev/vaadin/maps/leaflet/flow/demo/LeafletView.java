@@ -154,6 +154,15 @@ public class LeafletView extends VerticalLayout
 		polyline.setFill(true);
 		polyline.setFillColor("#00ffff");
 
+		final LPolyline polyline2 = new LPolyline(List.of(
+				new LPoint(49.675995, 12.160095),
+				new LPoint(49.676106, 12.160336),
+				new LPoint(49.676484, 12.160648),
+				new LPoint(49.677553, 12.165003)
+		));
+		polyline2.setPopup("line 2");
+		polyline2.setStrokeColor("#ffff00");
+
 		this.markerRathaus = new LMarker(49.675519, 12.163868, "L-22556");
 		this.markerRathaus.setPopup("Old Town Hall");
 
@@ -179,13 +188,14 @@ public class LeafletView extends VerticalLayout
 
 		this.map = new LMap(49.675126, 12.160733, 17);
 
-//		this.map.setHeight("700px");
-//		this.map.setWidth("1000px");
 		this.map.setSizeFull();
-		this.map.addMarkerClickListener(ev ->
-		{
-			System.out.println(ev.getTag());
-		}); // add some logic here for called Markers (token)
+
+		this.markerZob.addClickListener(event -> System.out.println(this.markerZob.getTag()));
+		polygonNoc.addClickListener(event -> System.out.println("Polygone clicked"));
+		polyline.addClickListener(event -> System.out.println("Polyline clicked"));
+		polyline2.addClickListener(event -> System.out.println("Polyline 2 clicked"));
+		this.markerRathaus.addClickListener(event -> System.out.println(this.markerRathaus.getTag()));
+		markerNoTag.addClickListener(event -> System.out.println("No tag clicked"));
 
 		this.map.addMapClickListener(event ->
 		{
@@ -200,6 +210,7 @@ public class LeafletView extends VerticalLayout
 				this.markerZob,
 				polygonNoc,
 				polyline,
+				polyline2,
 				this.markerRathaus,
 				markerNoTag
 		);

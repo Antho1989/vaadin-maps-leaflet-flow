@@ -24,10 +24,9 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.shared.Registration;
-import software.xdev.vaadin.maps.leaflet.flow.data.LCenter;
-import software.xdev.vaadin.maps.leaflet.flow.data.LComponent;
-import software.xdev.vaadin.maps.leaflet.flow.data.LMarker;
-import software.xdev.vaadin.maps.leaflet.flow.data.LTileLayer;
+import software.xdev.vaadin.maps.leaflet.flow.data.*;
+import software.xdev.vaadin.maps.leaflet.flow.event.ClickLEvent;
+import software.xdev.vaadin.maps.leaflet.flow.event.LEvent;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -119,6 +118,11 @@ public class LMap extends Component implements HasSize, HasStyle
 		return componentIds.get(lComponent);
 	}
 
+	private LComponent getComponentById(final int id)
+	{
+		return components.get(id);
+	}
+
 	/**
 	 * add Leaflet component(s) to the map
 	 *
@@ -197,33 +201,6 @@ public class LMap extends Component implements HasSize, HasStyle
 
 
 	@ClientCallable
-	protected void onMarkerClick(final String tag)
-	{
-		ComponentUtil.fireEvent(this, new MarkerClickEvent(this, true, tag));
-	}
-
-	public Registration addMarkerClickListener(final ComponentEventListener<MarkerClickEvent> listener)
-	{
-		return ComponentUtil.addListener(this, MarkerClickEvent.class, listener);
-	}
-
-	public static class MarkerClickEvent extends ComponentEvent<LMap>
-	{
-		private final String tag;
-
-		public MarkerClickEvent(final LMap source, final boolean fromClient, final String tag)
-		{
-			super(source, fromClient);
-			this.tag = tag;
-		}
-
-		public String getTag()
-		{
-			return this.tag;
-		}
-	}
-
-	@ClientCallable
 	protected void onMapClick(final double lat, final double lng)
 	{
 		ComponentUtil.fireEvent(this, new MapClickEvent(this, true, lat, lng));
@@ -255,6 +232,35 @@ public class LMap extends Component implements HasSize, HasStyle
 		{
 			return lng;
 		}
+	}
+
+	@ClientCallable
+	protected void onComponentEvent(final int id, final String type)
+	{
+		final LComponent c = getComponentById(id);
+
+		if (c == null)
+		{
+			throw new IllegalArgumentException("Component not in map");
+		}
+		if (!(c instanceof LEvented))
+		{
+			throw new IllegalArgumentException("Component not Evented");
+		}
+
+		final LEvented source = (LEvented) c;
+		final LEvent event;
+
+		if ("click".equals(type))
+		{
+			event = new ClickLEvent(source, true);
+		}
+		else
+		{
+			throw new IllegalArgumentException("Unknown event type '" + type + "'");
+		}
+
+		source.fireEvent(event);
 	}
 
 	/**
