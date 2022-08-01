@@ -60,6 +60,7 @@ export class LeafletMap extends PolymerElement {
 	}
 
 	setTileLayer(layer) {
+		this.tile.remove(this.map);
 		this.tile = L.tileLayer(layer.tile.link, {
 			attribution: layer.tile.attribution,
 			maxZoom: layer.tile.zoom,
@@ -82,6 +83,8 @@ export class LeafletMap extends PolymerElement {
 				maxZoom: 18
 			}
 		).addTo(this.map);
+
+		setTimeout(() => this.map.invalidateSize(), 1)
 
 		this.items = {};
 
@@ -157,7 +160,6 @@ export class LeafletMap extends PolymerElement {
 
 		evented.on('click', function (e) {
 			vaadinServer.onComponentEvent(id, e.type);
-			vaadinServer.onMapClick(e.latlng.lat, e.latlng.lng);
 		});
 	}
 
