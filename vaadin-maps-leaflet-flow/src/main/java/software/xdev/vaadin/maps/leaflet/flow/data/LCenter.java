@@ -21,59 +21,60 @@ package software.xdev.vaadin.maps.leaflet.flow.data;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import elemental.json.Json;
 import elemental.json.JsonObject;
+
+import java.util.Objects;
 
 
 public class LCenter
 {
-	
-	private List<Double> coordinates = new ArrayList<>();
-	private int zoom;
-	
-	public LCenter(final double lat, final double lon, final int zoom)
+
+	private final LPoint coordinates;
+	private final int zoom;
+
+	public LCenter(final double lat, final double lng, final int zoom)
 	{
-		this.coordinates.add(lat);
-		this.coordinates.add(lon);
+		this.coordinates = new LPoint(lat, lng);
 		this.zoom = zoom;
 	}
-	
-	public LCenter(final double lat, final double lon)
-	{
-		this(lat, lon, 6);
-	}
-	
+
 	public int getZoom()
 	{
 		return this.zoom;
 	}
-	
-	/**
-	 * Sets the zoom level at the start
-	 *
-	 * @param zoom
-	 */
-	public void setZoom(final int zoom)
-	{
-		this.zoom = zoom;
-	}
-	
-	public List<Double> getCoordinates()
+
+	public LPoint getCoordinates()
 	{
 		return this.coordinates;
 	}
-	
-	public void setCoordinates(final List<Double> coordinates)
+
+	@Override
+	public boolean equals(Object o)
 	{
-		this.coordinates = coordinates;
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		LCenter that = (LCenter) o;
+		return this.zoom == that.zoom && this.coordinates.equals(that.coordinates);
 	}
-	
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(coordinates, zoom);
+	}
+
+	@Override
+	public String toString()
+	{
+		return "LCenter{" +
+				"coordinates=" + coordinates +
+				", zoom=" + zoom +
+				'}';
+	}
+
 	public JsonObject toJson()
 	{
 		final JsonObject jsonObject = Json.createObject();
@@ -82,11 +83,11 @@ public class LCenter
 		{
 			jsonObject.put("point", Json.parse(mapper.writeValueAsString(this)));
 		}
-		catch(final JsonProcessingException e)
+		catch (final JsonProcessingException e)
 		{
 			throw new RuntimeException(e);
 		}
-		
+
 		return jsonObject;
 	}
 }

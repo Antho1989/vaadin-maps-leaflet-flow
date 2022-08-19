@@ -9,10 +9,12 @@
 - Added polylines
 - Added `LMap#containsLComponent(LComponent)`
 - Added on component click event support
+- Added `LCenter` update
 
 ### Changed
 
-- Made `LPoint` class immutable
+- Changed `LPoint` class to be immutable and serializable by Jackson
+- Changed `LCenter` class to be immutable
 
 ### Removed
 

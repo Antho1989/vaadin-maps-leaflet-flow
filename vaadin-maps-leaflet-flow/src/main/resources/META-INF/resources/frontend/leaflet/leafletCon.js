@@ -89,9 +89,14 @@ export class LeafletMap extends PolymerElement {
 		this.items = {};
 
 		let vaadinServer = this.$server;
+		let map = this.map;
 
 		this.map.on('click', function (e) {
 			vaadinServer.onMapClick(e.latlng.lat, e.latlng.lng);
+		});
+		
+		this.map.on('zoomend moveend', function () {
+			vaadinServer.onMapCenterChanged(map.getCenter().lat, map.getCenter().lng, map.getZoom());
 		});
 	}
 

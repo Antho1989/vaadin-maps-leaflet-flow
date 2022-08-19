@@ -20,9 +20,16 @@ package software.xdev.vaadin.maps.leaflet.flow.data;
  * #L%
  */
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
+@JsonSerialize(using = LPoint.LPointSerializer.class)
 public class LPoint
 {
 	private final List<Double> coords;
@@ -60,5 +67,30 @@ public class LPoint
 	public int hashCode()
 	{
 		return Objects.hash(coords);
+	}
+
+	@Override
+	public String toString()
+	{
+		return "LPoint{" +
+				"coords=" + coords +
+				'}';
+	}
+
+	public static final class LPointSerializer extends StdSerializer<LPoint>
+	{
+		public LPointSerializer()
+		{
+			super(LPoint.class);
+		}
+
+		@Override
+		public void serialize(LPoint value, JsonGenerator gen, SerializerProvider provider) throws IOException
+		{
+			gen.writeStartArray();
+			gen.writeNumber(value.getLat());
+			gen.writeNumber(value.getLng());
+			gen.writeEndArray();
+		}
 	}
 }
