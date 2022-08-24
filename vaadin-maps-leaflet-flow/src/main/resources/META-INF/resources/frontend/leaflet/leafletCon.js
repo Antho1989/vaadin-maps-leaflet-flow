@@ -60,7 +60,9 @@ export class LeafletMap extends PolymerElement {
 	}
 
 	setTileLayer(layer) {
-		this.tile.remove(this.map);
+		if (this.tile) {
+			this.tile.remove(this.map);
+		}
 		this.tile = L.tileLayer(layer.tile.link, {
 			attribution: layer.tile.attribution,
 			maxZoom: layer.tile.zoom,
@@ -77,12 +79,7 @@ export class LeafletMap extends PolymerElement {
 		super.ready();
 		this.map = new L.map(this.$.divMap);
 
-		this.tile = L.tileLayer(
-			"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-				attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-				maxZoom: 18
-			}
-		).addTo(this.map);
+		this.tile = undefined;
 
 		setTimeout(() => this.map.invalidateSize(), 1)
 
@@ -94,7 +91,7 @@ export class LeafletMap extends PolymerElement {
 		this.map.on('click', function (e) {
 			vaadinServer.onMapClick(e.latlng.lat, e.latlng.lng);
 		});
-		
+
 		this.map.on('zoomend moveend', function () {
 			vaadinServer.onMapCenterChanged(map.getCenter().lat, map.getCenter().lng, map.getZoom());
 		});
