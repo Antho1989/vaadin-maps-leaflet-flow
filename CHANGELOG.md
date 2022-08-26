@@ -10,6 +10,7 @@
 - Added `LMap#containsLComponent(LComponent)`
 - Added on component click event support
 - Added `LCenter` update
+- Added `LMap#invalidateSize()`
 
 ### Changed
 

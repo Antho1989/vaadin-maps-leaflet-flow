@@ -199,6 +199,10 @@ public class LMap extends Component implements HasSize, HasStyle
 		this.setViewPoint(start);
 	}
 	
+	public void invalidateSize() {
+		this.getElement().executeJs("this.map.invalidateSize()");
+	}
+	
 	@ClientCallable
 	protected void onMapCenterChanged(final double lat, final double lng, final int zoom) {
 		this.center = new LCenter(lat, lng, zoom);
