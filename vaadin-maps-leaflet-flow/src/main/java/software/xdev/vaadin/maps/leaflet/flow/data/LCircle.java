@@ -25,6 +25,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import elemental.json.Json;
+import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 
 
@@ -310,7 +311,8 @@ public class LCircle implements LComponent
 		try
 		{
 			jsonObject.put("type", Json.create("Feature"));
-			jsonObject.put("geometry", Json.parse(mapper.writeValueAsString(this.geometry)));
+			JsonArray geom = Json.instance().parse(mapper.writeValueAsString(this.geometry));
+			jsonObject.put("geometry",  geom);
 			jsonObject.put("properties", Json.parse(mapper.writeValueAsString(this.properties)));
 		}
 		catch(final JsonProcessingException e)

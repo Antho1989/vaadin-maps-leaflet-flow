@@ -145,7 +145,7 @@ export class LeafletMap extends PolymerElement {
 	}
 
 	addCircle(id, obj) {
-		let item = L.circle(obj.geometry.coords, obj.properties)
+		let item = L.circle(obj.geometry, obj.properties)
 			.addTo(this.map);
 
 		if (obj.properties.popup != null) {

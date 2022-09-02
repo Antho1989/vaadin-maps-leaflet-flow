@@ -20,7 +20,6 @@
 
 	<modules>
 		<module>vaadin-maps-leaflet-flow</module>
-		<module>vaadin-maps-leaflet-flow-demo</module>
 	</modules>
 
 	<licenses>
