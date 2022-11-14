@@ -44,8 +44,10 @@ public class LMap extends Component implements HasSize, HasStyle
 	private static final String DELETE_FUNCTION = "deleteItem";
 	private static final String TILE_LAYER_FUNCTION = "setTileLayer";
 	private static final String SET_ZOOM_FUNCTION = "setZoomLevel";
+	private static final String ZOOM_TO_EXTENT_FUNCTION = "zoomToExtent";
 
 	private LCenter center;
+	private LBounds rectangle;
 
 	private final Map<Integer, LComponent> components = new HashMap<>();
 	private final Map<LComponent, Integer> componentIds = new HashMap<>();
@@ -68,6 +70,20 @@ public class LMap extends Component implements HasSize, HasStyle
 	{
 		this.getElement().callJsFunction(SET_VIEW_POINT_FUNCTION, viewpoint.toJson());
 	}
+    
+	public void zoomToExtent(final LBounds bounds)
+	{
+        this.rectangle = bounds;
+
+        if (bounds.getNorthEastLat() == bounds.getSouthWestLat()
+				&& bounds.getNorthEastLng() == bounds.getSouthWestLng()) {
+            // if only single point, don't change zoom level
+            setCenter(new LCenter(bounds.getNorthEastLat(), bounds.getNorthEastLng(), this.getCenter().getZoom()));
+	} else {
+			this.getElement().callJsFunction(ZOOM_TO_EXTENT_FUNCTION, bounds.toJson());
+		}
+
+    }
 
 	public void setTileLayer(final LTileLayer tl)
 	{

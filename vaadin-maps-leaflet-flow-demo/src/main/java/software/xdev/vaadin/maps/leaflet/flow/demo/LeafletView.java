@@ -12,6 +12,8 @@ import com.vaadin.flow.router.Route;
 import software.xdev.vaadin.maps.leaflet.flow.LMap;
 import software.xdev.vaadin.maps.leaflet.flow.data.*;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,6 +27,9 @@ public class LeafletView extends VerticalLayout
 	 * UI-Components
 	 */
 	private final Button btnLunch = new Button("Where do XDEV employees go for lunch?");
+	private final Button btnZoomToExtent = new Button("Zoom to extent (fixed values)");
+	private final Button btnZoomToExtent1 = new Button("Zoom to extent (1 value)");
+	private final Button btnAddToZoomView = new Button("Add point");
 	private final Button btnOpenDialog = new Button("Open dialog over map", ev ->
 	{
 		final Icon icoClose = VaadinIcon.CLOSE.create();
@@ -52,10 +57,14 @@ public class LeafletView extends VerticalLayout
 	private LMarker markerGreek;
 	private LMarker markerBakery;
 	private LMarker markerLeberkaese;
+	private LBounds lbounds;
 
 	public LeafletView()
 	{
 		this.btnLunch.addClickListener(this::btnLunchClick);
+		this.btnZoomToExtent.addClickListener(this::btnZoomToExtentClick);
+		this.btnZoomToExtent1.addClickListener(this::btnZoomToExtent1Click);
+		this.btnAddToZoomView.addClickListener(this::btnAddToZoomViewClick);
 		this.btnOpenZobPopup.addClickListener(event -> map.openPopup(markerZob));
 		this.btnAddRemove.addClickListener(this::btnAddRemoveClick);
 
@@ -63,7 +72,10 @@ public class LeafletView extends VerticalLayout
 				this.btnLunch,
 				this.btnOpenDialog,
 				this.btnOpenZobPopup,
-				this.btnAddRemove
+				this.btnAddRemove,
+				this.btnZoomToExtent,
+				this.btnZoomToExtent1,
+				this.btnAddToZoomView
 		));
 
 		this.initMapComponents();
@@ -89,6 +101,42 @@ public class LeafletView extends VerticalLayout
 
 		this.btnLunch.setText(this.viewLunch ? "Go back to the normal view" : "Where do XDEV employees go for lunch?");
 	}
+
+	private void btnZoomToExtentClick(final ClickEvent<Button> event)
+	{
+//		final LBounds bounds = new LBounds(
+//			new LPoint(44.7099952002323, -0.5825165376485949),	// North
+//			new LPoint(44.70578333435885, -0.5855568214725881)		// South
+//			);
+		lbounds = new LBounds(
+			new LPoint(44.83422173810018,-0.570227273269922),
+			new LPoint(44.83023173810018,-0.577257273169922)
+//			new LPoint(44.718751793498356, -0.5944254275727441),	// North
+//			new LPoint(44.71652566513751, -0.5853273748498107)		// South
+			);
+		this.map.zoomToExtent(lbounds);
+	}
+	private void btnZoomToExtent1Click(final ClickEvent<Button> event)
+	{
+		LBounds lb = new LBounds();
+		lbounds = new LBounds(
+			new LPoint(44.7199952002323, -0.5925165376485949)
+			);
+		this.map.zoomToExtent(lbounds);
+	}
+	private void btnAddToZoomViewClick(final ClickEvent<Button> event)
+	{
+		if (lbounds == null)
+			btnZoomToExtentClick(event);
+//		List<LPoint> points = new ArrayList<>();
+//		points.add(new LPoint(44.714464310360036, -0.5966272734835651));
+//		points.add(new LPoint(44.72142885939203, -0.579239682291169));
+		lbounds.addPoints(
+				new LPoint(44.714464310360036, -0.5966272734835651),
+				new LPoint(44.72142885939203, -0.579239682291169));
+		this.map.zoomToExtent(lbounds);
+	}
+
 
 	private void btnAddRemoveClick(ClickEvent<Button> event)
 	{
