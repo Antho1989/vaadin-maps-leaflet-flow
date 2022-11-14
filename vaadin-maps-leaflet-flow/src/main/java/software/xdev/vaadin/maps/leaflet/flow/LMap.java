@@ -47,7 +47,6 @@ public class LMap extends Component implements HasSize, HasStyle
 	private static final String ZOOM_TO_EXTENT_FUNCTION = "zoomToExtent";
 
 	private LCenter center;
-	private LBounds rectangle;
 
 	private final Map<Integer, LComponent> components = new HashMap<>();
 	private final Map<LComponent, Integer> componentIds = new HashMap<>();
@@ -73,13 +72,14 @@ public class LMap extends Component implements HasSize, HasStyle
     
 	public void zoomToExtent(final LBounds bounds)
 	{
-        this.rectangle = bounds;
-
-        if (bounds.getNorthEastLat() == bounds.getSouthWestLat()
-				&& bounds.getNorthEastLng() == bounds.getSouthWestLng()) {
-            // if only single point, don't change zoom level
-            setCenter(new LCenter(bounds.getNorthEastLat(), bounds.getNorthEastLng(), this.getCenter().getZoom()));
-	} else {
+		if (bounds == null){
+			setCenter(new LCenter(0, 0, 1));
+			return;
+		}
+        if (Math.abs(bounds.getNorthEastLat() - bounds.getSouthWestLat()) <= 0.0001
+				&& Math.abs(bounds.getNorthEastLng() - bounds.getSouthWestLng()) <= 0.001) {
+            setCenter(new LCenter(bounds.getNorthEastLat(), bounds.getNorthEastLng(), 17));
+		} else {
 			this.getElement().callJsFunction(ZOOM_TO_EXTENT_FUNCTION, bounds.toJson());
 		}
 

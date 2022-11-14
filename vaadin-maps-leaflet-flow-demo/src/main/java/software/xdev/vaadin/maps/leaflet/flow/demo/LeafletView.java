@@ -30,6 +30,7 @@ public class LeafletView extends VerticalLayout
 	private final Button btnZoomToExtent = new Button("Zoom to extent (fixed values)");
 	private final Button btnZoomToExtent1 = new Button("Zoom to extent (1 value)");
 	private final Button btnAddToZoomView = new Button("Add point");
+	private final Button btnAddToZoomNullView = new Button("Clear points");
 	private final Button btnOpenDialog = new Button("Open dialog over map", ev ->
 	{
 		final Icon icoClose = VaadinIcon.CLOSE.create();
@@ -65,6 +66,7 @@ public class LeafletView extends VerticalLayout
 		this.btnZoomToExtent.addClickListener(this::btnZoomToExtentClick);
 		this.btnZoomToExtent1.addClickListener(this::btnZoomToExtent1Click);
 		this.btnAddToZoomView.addClickListener(this::btnAddToZoomViewClick);
+		this.btnAddToZoomNullView.addClickListener(this::btnAddToZoomViewNullClick);
 		this.btnOpenZobPopup.addClickListener(event -> map.openPopup(markerZob));
 		this.btnAddRemove.addClickListener(this::btnAddRemoveClick);
 
@@ -75,7 +77,8 @@ public class LeafletView extends VerticalLayout
 				this.btnAddRemove,
 				this.btnZoomToExtent,
 				this.btnZoomToExtent1,
-				this.btnAddToZoomView
+				this.btnAddToZoomView,
+				this.btnAddToZoomNullView
 		));
 
 		this.initMapComponents();
@@ -118,7 +121,6 @@ public class LeafletView extends VerticalLayout
 	}
 	private void btnZoomToExtent1Click(final ClickEvent<Button> event)
 	{
-		LBounds lb = new LBounds();
 		lbounds = new LBounds(
 			new LPoint(44.7199952002323, -0.5925165376485949)
 			);
@@ -128,13 +130,14 @@ public class LeafletView extends VerticalLayout
 	{
 		if (lbounds == null)
 			btnZoomToExtentClick(event);
-//		List<LPoint> points = new ArrayList<>();
-//		points.add(new LPoint(44.714464310360036, -0.5966272734835651));
-//		points.add(new LPoint(44.72142885939203, -0.579239682291169));
 		lbounds.addPoints(
 				new LPoint(44.714464310360036, -0.5966272734835651),
 				new LPoint(44.72142885939203, -0.579239682291169));
 		this.map.zoomToExtent(lbounds);
+	}
+	private void btnAddToZoomViewNullClick(final ClickEvent<Button> event)
+	{
+		this.map.zoomToExtent(null);
 	}
 
 

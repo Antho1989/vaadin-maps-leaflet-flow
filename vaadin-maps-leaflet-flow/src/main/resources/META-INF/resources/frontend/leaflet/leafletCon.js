@@ -80,6 +80,9 @@ export class LeafletMap extends PolymerElement {
 			[rectangle.bounds.northEastLat, rectangle.bounds.northEastLng],
 			[rectangle.bounds.southWestLat, rectangle.bounds.southWestLng]
 		]);
+		if (this.map.getZoom() > 18)
+		    this.map.setZoom(18);
+
 	}
 
 	_initMap() {
