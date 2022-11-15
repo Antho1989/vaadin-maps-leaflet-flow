@@ -77,8 +77,8 @@ export class LeafletMap extends PolymerElement {
 
 	zoomToExtent(rectangle) {
 		this.map.fitBounds([
-			[rectangle.bounds.northEastLat, rectangle.bounds.northEastLng],
-			[rectangle.bounds.southWestLat, rectangle.bounds.southWestLng]
+			[rectangle.bounds.maxLat, rectangle.bounds.minLng],
+			[rectangle.bounds.minLat, rectangle.bounds.maxLng]
 		]);
 		if (this.map.getZoom() > 18)
 		    this.map.setZoom(18);

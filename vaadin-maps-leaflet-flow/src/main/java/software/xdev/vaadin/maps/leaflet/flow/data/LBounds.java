@@ -20,69 +20,64 @@ package software.xdev.vaadin.maps.leaflet.flow.data;
  * #L%
  */
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import elemental.json.Json;
 import elemental.json.JsonObject;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 public class LBounds implements Serializable
 {
-    private double southWestLng;
-    private double southWestLat;
-    private double northEastLng;
-    private double northEastLat;
+    private double minLng;
+    private double minLat;
+    private double maxLng;
+    private double maxLat;
 
-    public LBounds(){}
-    public LBounds(final LPoint northEast) {
-        this(northEast, northEast);
+    public LBounds(){
+        this.maxLng = Double.NEGATIVE_INFINITY;
+        this.maxLat = Double.NEGATIVE_INFINITY;
+        this.minLng = Double.POSITIVE_INFINITY;
+        this.minLat = Double.POSITIVE_INFINITY;
     }
 
-    public LBounds(final LPoint northEast, final LPoint southWest) {
-        this.northEastLng = northEast.getLng();
-        this.northEastLat = northEast.getLat();
-        this.southWestLng = southWest.getLng();
-        this.southWestLat = southWest.getLat();
+    public LBounds(final LPoint... points) {
+        this();
+        addPoints(points);
     }
 
-    public double getSouthWestLng() {
-        return southWestLng;
+    public double getMinLng() {
+        return minLng;
     }
 
-    public double getSouthWestLat() {
-        return southWestLat;
+    public double getMinLat() {
+        return minLat;
     }
 
-    public double getNorthEastLng() {
-        return northEastLng;
+    public double getMaxLng() {
+        return maxLng;
     }
 
-    public double getNorthEastLat() {
-        return northEastLat;
+    public double getMaxLat() {
+        return maxLat;
     }
 
-    public void setSouthWestLng(double southWestLng) {
-        this.southWestLng = southWestLng;
+    public void setMinLng(double minLng) {
+        this.minLng = minLng;
     }
 
-    public void setSouthWestLat(double southWestLat) {
-        this.southWestLat = southWestLat;
+    public void setMinLat(double minLat) {
+        this.minLat = minLat;
     }
 
-    public void setNorthEastLng(double northEastLng) {
-        this.northEastLng = northEastLng;
+    public void setMaxLng(double maxLng) {
+        this.maxLng = maxLng;
     }
 
-    public void setNorthEastLat(double northEastLat) {
-        this.northEastLat = northEastLat;
+    public void setMaxLat(double maxLat) {
+        this.maxLat = maxLat;
     }
 
     public void addPoints(final LPoint... points) {
@@ -91,10 +86,10 @@ public class LBounds implements Serializable
     }
 
     public void addPoint(final double lat, final double lng) {
-        setNorthEastLat(Math.max(getNorthEastLat(), lat));
-        setNorthEastLng(Math.max(getNorthEastLng(), lng));
-        setSouthWestLng(Math.min(getSouthWestLng(), lng));
-        setSouthWestLat(Math.min(getSouthWestLat(), lat));
+        setMaxLat(Math.max(getMaxLat(), lat));
+        setMaxLng(Math.max(getMaxLng(), lng));
+        setMinLng(Math.min(getMinLng(), lng));
+        setMinLat(Math.min(getMinLat(), lat));
     }
 
     @Override
@@ -103,10 +98,10 @@ public class LBounds implements Serializable
         if (o == null || getClass() != o.getClass()) return false;
         final LBounds that = (LBounds) o;
         return (
-                that.getNorthEastLat() == this.getNorthEastLat()
-                        && that.getNorthEastLng() == this.getNorthEastLng()
-                        && that.getSouthWestLat() == this.getSouthWestLat()
-                        && that.getSouthWestLng() == this.getSouthWestLng());
+                that.getMaxLat() == this.getMaxLat()
+                        && that.getMaxLng() == this.getMaxLng()
+                        && that.getMinLat() == this.getMinLat()
+                        && that.getMinLng() == this.getMinLng());
 
     }
 
@@ -118,10 +113,10 @@ public class LBounds implements Serializable
     @Override
     public String toString() {
         return "Bounds {" +
-                "NE latlon [" + getNorthEastLat() +
-                "," + getNorthEastLng() +
-                "],SW latlon [" + getSouthWestLat() +
-                "," + getSouthWestLng() +
+                "NE latlon [" + getMaxLat() +
+                "," + getMaxLng() +
+                "],SW latlon [" + getMinLat() +
+                "," + getMinLng() +
                 "]}";
     }
 

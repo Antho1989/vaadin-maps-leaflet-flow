@@ -76,9 +76,9 @@ public class LMap extends Component implements HasSize, HasStyle
 			setCenter(new LCenter(0, 0, 1));
 			return;
 		}
-        if (Math.abs(bounds.getNorthEastLat() - bounds.getSouthWestLat()) <= 0.0001
-				&& Math.abs(bounds.getNorthEastLng() - bounds.getSouthWestLng()) <= 0.001) {
-            setCenter(new LCenter(bounds.getNorthEastLat(), bounds.getNorthEastLng(), 17));
+        if (Math.abs(bounds.getMaxLat() - bounds.getMinLat()) <= 0.0001
+				&& Math.abs(bounds.getMaxLng() - bounds.getMinLng()) <= 0.001) {
+            setCenter(new LCenter(bounds.getMaxLat(), bounds.getMaxLng(), 17));
 		} else {
 			this.getElement().callJsFunction(ZOOM_TO_EXTENT_FUNCTION, bounds.toJson());
 		}
