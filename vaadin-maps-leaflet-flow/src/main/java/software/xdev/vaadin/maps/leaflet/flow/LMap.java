@@ -21,9 +21,11 @@ package software.xdev.vaadin.maps.leaflet.flow;
  */
 
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.dependency.JavaScript;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.shared.Registration;
+import org.apache.commons.logging.LogFactory;
 import software.xdev.vaadin.maps.leaflet.flow.data.*;
 import software.xdev.vaadin.maps.leaflet.flow.event.ClickLEvent;
 import software.xdev.vaadin.maps.leaflet.flow.event.LEvent;
@@ -36,25 +38,33 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @NpmPackage(value = "leaflet", version = "^1.6.0")
 @Tag("leaflet-map")
+@JsModule("https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/leaflet-src.js")
+//@JsModule("https://raruto.github.io/cdn/leaflet-google/0.0.3/leaflet-google.js")
+@JsModule("./leaflet/leaflet-google.js")
 @JsModule("./leaflet/leafletCon.js")
 public class LMap extends Component implements HasSize, HasStyle
 {
 	private static final String SET_VIEW_POINT_FUNCTION = "setViewPoint";
-
 	private static final String DELETE_FUNCTION = "deleteItem";
 	private static final String TILE_LAYER_FUNCTION = "setTileLayer";
+	private static final String ADD_TILE_LAYER_FUNCTION = "addTileLayer";
 	private static final String SET_ZOOM_FUNCTION = "setZoomLevel";
 	private static final String ZOOM_TO_EXTENT_FUNCTION = "zoomToExtent";
-
+	private static final String INIT_GOOGLE_MAP = "switchToGmap";
 	private LCenter center;
-
 	private final Map<Integer, LComponent> components = new HashMap<>();
 	private final Map<LComponent, Integer> componentIds = new HashMap<>();
-
 	private final AtomicInteger nextComponentId = new AtomicInteger(1);
 
 	public LMap(final double lat, final double lon, final int zoom)
 	{
+		this.center = new LCenter(lat, lon, zoom);
+		this.setViewPoint(this.center);
+		this.setFixZIndexEnabled(true);
+	}
+	public LMap(final double lat, final double lon, final int zoom, final String gglKey)
+	{
+		UI.getCurrent().getPage().addJavaScript("https://maps.googleapis.com/maps/api/js?key=" + gglKey);
 		this.center = new LCenter(lat, lon, zoom);
 		this.setViewPoint(this.center);
 		this.setFixZIndexEnabled(true);
@@ -67,27 +77,39 @@ public class LMap extends Component implements HasSize, HasStyle
 
 	public void setViewPoint(final LCenter viewpoint)
 	{
+		System.out.println("######## viewpoint.toJson() : " + viewpoint.toJson());
 		this.getElement().callJsFunction(SET_VIEW_POINT_FUNCTION, viewpoint.toJson());
 	}
-    
+
 	public void zoomToExtent(final LBounds bounds)
 	{
 		if (bounds == null){
-			setCenter(new LCenter(0, 0, 1));
+			setCenter(new LCenter(0, 0, 2));
 			return;
 		}
-        if (Math.abs(bounds.getMaxLat() - bounds.getMinLat()) <= 0.0001
+		if (Math.abs(bounds.getMaxLat() - bounds.getMinLat()) <= 0.0001
 				&& Math.abs(bounds.getMaxLng() - bounds.getMinLng()) <= 0.001) {
-            setCenter(new LCenter(bounds.getMaxLat(), bounds.getMaxLng(), 17));
+			setCenter(new LCenter(bounds.getMaxLat(), bounds.getMaxLng(), 17));
+			System.out.println("zoomtoextent : center \n" + bounds.getMaxLat() + "," + bounds.getMaxLng() + "," + 17);
 		} else {
 			this.getElement().callJsFunction(ZOOM_TO_EXTENT_FUNCTION, bounds.toJson());
+			System.out.println("zoomtoextent : center \n" + bounds.toJson());
 		}
+	}
 
-    }
+	public void switchToGmap(String view)
+	{
+		System.out.println("####### setTileLayer : Switch to GMap ... call to JS function ! \n " + this.getCenter().toJson());
+		this.getElement().callJsFunction(INIT_GOOGLE_MAP, view, this.getCenter().toJson());
+	}
 
 	public void setTileLayer(final LTileLayer tl)
 	{
 		this.getElement().callJsFunction(TILE_LAYER_FUNCTION, tl.toJson());
+	}
+	public void addTileLayer(final LTileLayer tl)
+	{
+		this.getElement().callJsFunction(ADD_TILE_LAYER_FUNCTION, tl.toJson(), 0.5);
 	}
 
 	/**
@@ -107,6 +129,12 @@ public class LMap extends Component implements HasSize, HasStyle
 
 	private int addComponent(final LComponent lComponent)
 	{
+		setTileLayer(new LTileLayer(
+				"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+				"© <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>",
+				18,
+				"base"
+		));
 		if (componentIds.containsKey(lComponent))
 			throw new IllegalArgumentException("Component already added to this map");
 
@@ -214,11 +242,11 @@ public class LMap extends Component implements HasSize, HasStyle
 		this.center = start;
 		this.setViewPoint(start);
 	}
-	
+
 	public void invalidateSize() {
 		this.getElement().executeJs("this.map.invalidateSize()");
 	}
-	
+
 	@ClientCallable
 	protected void onMapCenterChanged(final double lat, final double lng, final int zoom) {
 		this.center = new LCenter(lat, lng, zoom);
@@ -298,3 +326,6 @@ public class LMap extends Component implements HasSize, HasStyle
 	}
 
 }
+
+
+
