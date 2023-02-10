@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Tag("leaflet-map")
 @JsModule("https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/leaflet-src.js")
 //@JsModule("https://raruto.github.io/cdn/leaflet-google/0.0.3/leaflet-google.js")
-@JsModule("./leaflet/leaflet-google.js")
+//@JsModule("./leaflet/leaflet-google.js")
 @JsModule("./leaflet/leafletCon.js")
 public class LMap extends Component implements HasSize, HasStyle
 {
@@ -129,12 +129,6 @@ public class LMap extends Component implements HasSize, HasStyle
 
 	private int addComponent(final LComponent lComponent)
 	{
-		setTileLayer(new LTileLayer(
-				"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-				"© <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>",
-				18,
-				"base"
-		));
 		if (componentIds.containsKey(lComponent))
 			throw new IllegalArgumentException("Component already added to this map");
 
