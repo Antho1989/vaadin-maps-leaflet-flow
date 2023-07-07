@@ -29,7 +29,6 @@ public class LeafletView extends VerticalLayout
 	private final Button btnLunch = new Button("Where do XDEV employees go for lunch?");
 	private final Button btnZoomToExtent = new Button("Zoom to extent (fixed values)");
 	private final Button btnZoomToExtent1 = new Button("Zoom to extent (1 value)");
-	private final Button btnSwitchToGmap = new Button("Switch to Google Map");
 	private final Button btnAddToZoomView = new Button("Add point");
 	private final Button btnAddToZoomNullView = new Button("Clear points");
 	private final Button btnOpenDialog = new Button("Open dialog over map", ev ->
@@ -66,20 +65,18 @@ public class LeafletView extends VerticalLayout
 		this.btnLunch.addClickListener(this::btnLunchClick);
 		this.btnZoomToExtent.addClickListener(this::btnZoomToExtentClick);
 		this.btnZoomToExtent1.addClickListener(this::btnZoomToExtent1Click);
-		this.btnSwitchToGmap.addClickListener(this::btnSwitchToGmapClick);
 		this.btnAddToZoomView.addClickListener(this::btnAddToZoomViewClick);
 		this.btnAddToZoomNullView.addClickListener(this::btnAddToZoomViewNullClick);
 		this.btnOpenZobPopup.addClickListener(event -> map.openPopup(markerZob));
 		this.btnAddRemove.addClickListener(this::btnAddRemoveClick);
 
 		this.add(new HorizontalLayout(
-				/*this.btnLunch,
+				this.btnLunch,
 				this.btnOpenDialog,
 				this.btnOpenZobPopup,
-				this.btnAddRemove,*/
+				this.btnAddRemove,
 				this.btnZoomToExtent,
 				this.btnZoomToExtent1,
-				this.btnSwitchToGmap,
 				this.btnAddToZoomView,
 				this.btnAddToZoomNullView
 		));
@@ -110,16 +107,15 @@ public class LeafletView extends VerticalLayout
 
 	private void btnZoomToExtentClick(final ClickEvent<Button> event)
 	{
-//		System.out.println("-- set tile layer");
-//		this.map.setTileLayer(new LTileLayer(
-//			"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-//			"© <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>",
-//			18,
-//			"base"
-//		));
+//		final LBounds bounds = new LBounds(
+//			new LPoint(44.7099952002323, -0.5825165376485949),	// North
+//			new LPoint(44.70578333435885, -0.5855568214725881)		// South
+//			);
 		lbounds = new LBounds(
 			new LPoint(44.83422173810018,-0.570227273269922),
 			new LPoint(44.83023173810018,-0.577257273169922)
+//			new LPoint(44.718751793498356, -0.5944254275727441),	// North
+//			new LPoint(44.71652566513751, -0.5853273748498107)		// South
 			);
 		this.map.zoomToExtent(lbounds);
 	}
@@ -129,10 +125,6 @@ public class LeafletView extends VerticalLayout
 			new LPoint(44.7199952002323, -0.5925165376485949)
 			);
 		this.map.zoomToExtent(lbounds);
-	}
-	private void btnSwitchToGmapClick(final ClickEvent<Button> event)
-	{
-		this.map.switchToGmap("HYBRID");
 	}
 	private void btnAddToZoomViewClick(final ClickEvent<Button> event)
 	{
@@ -145,16 +137,6 @@ public class LeafletView extends VerticalLayout
 	}
 	private void btnAddToZoomViewNullClick(final ClickEvent<Button> event)
 	{
-//		//TODO : for tests purspose only
-//		this.map = new LMap(49.675126, 12.160733, 17, "AIzaSyCuzyEjRovSbURspjHP_8FkB8AWMpPDKHc");
-//		System.out.println("####### btnAddToZoomViewNullClick : Set tile layer ...");
-//		this.map.setTileLayer(new LTileLayer(
-//				"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-//				"© <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>",
-//				18,
-//				"base"
-//		));
-
 		this.map.zoomToExtent(null);
 	}
 
@@ -255,7 +237,7 @@ public class LeafletView extends VerticalLayout
 		this.markerLeberkaese = new LMarker(49.673800, 12.160113);
 		this.markerLeberkaese.setPopup("Fast food like Leberkäsesemmeln");
 
-		this.map = new LMap(49.675126, 12.160733, 17, "AIzaSyCuzyEjRovSbURspjHP_8FkB8AWMpPDKHc");
+		this.map = new LMap(49.675126, 12.160733, 17);
 		this.map.setTileLayer(new LTileLayer(
 				"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
 				"© <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>",
