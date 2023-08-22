@@ -10,10 +10,17 @@ Vaadin Flow Java API for [Leaflet Maps](https://leafletjs.com/) Component
 
 ## Installation
 [Installation guide of the latest release](https://github.com/xdev-software/vaadin-maps-leaflet-flow/releases/latest#Installation)
+* Checkout the repo
+* Run ``mvn clean``
+* Navigate into ``vaadin-maps-leaflet-flow`` 
+* Upate node and install the dependencies
+* Run ``curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -``
+* Run ``sudo apt update``
+* Run ``apt install nodejs``
+* Run ``npm install @babel/plugin-proposal-object-rest-spread``
+* Run ``mvn install``
 
 ## Run the Demo
-* Checkout the repo
-* Run ``mvn clean install``
 * Navigate into ``vaadin-maps-leaflet-flow-demo`` 
 * Run ``mvn jetty:run``
 * Open http://localhost:8080
