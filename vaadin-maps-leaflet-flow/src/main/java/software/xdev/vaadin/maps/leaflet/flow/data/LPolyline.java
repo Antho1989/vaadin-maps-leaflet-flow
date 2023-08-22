@@ -61,6 +61,10 @@ public class LPolyline extends LEvented
 		this.geometry = new LPolygonGeometry("Polyline", posis);
 	}
 
+	public void setOffset(int offset){
+		this.properties.setOffset(offset);
+	}
+
 	public boolean isStroke()
 	{
 		return this.properties.isStroke();

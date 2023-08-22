@@ -44,7 +44,18 @@ public class LPolygonOptions
 	private double radius;
 	
 	private String popup;
-	
+
+	private int offset;
+
+
+	public int getOffset() {
+		return offset;
+	}
+
+	public void setOffset(int offset) {
+		this.offset = offset;
+	}
+
 	public double getRadius()
 	{
 		return this.radius;

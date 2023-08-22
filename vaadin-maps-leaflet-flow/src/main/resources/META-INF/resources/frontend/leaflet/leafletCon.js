@@ -1,12 +1,13 @@
 import {html, PolymerElement} from "@polymer/polymer/polymer-element.js";
-import "leaflet/dist/leaflet.js";
+//import "leaflet/dist/leaflet.js";
+import "@vaadin/flow-frontend/leaflet/leaflet.js";
 
 export class LeafletMap extends PolymerElement {
 	static get template() {
 		return html`
 			<link
 					rel="stylesheet"
-					href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+					href="frontend/leaflet/leaflet.css"
 			/>
 
 			<style>

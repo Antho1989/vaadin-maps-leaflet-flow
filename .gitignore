@@ -29,3 +29,4 @@ rebel.xml
 package.json
 package-lock.json
 webpack.config.js
+vaadin-maps-leaflet-flow/frontend

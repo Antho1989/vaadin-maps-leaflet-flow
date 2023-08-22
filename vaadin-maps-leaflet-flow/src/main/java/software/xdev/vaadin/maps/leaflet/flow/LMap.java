@@ -34,8 +34,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@NpmPackage(value = "leaflet", version = "^1.6.0")
 @Tag("leaflet-map")
+@JsModule("./leaflet/leaflet.js")
 @JsModule("./leaflet/leafletCon.js")
 public class LMap extends Component implements HasSize, HasStyle
 {
@@ -84,6 +84,7 @@ public class LMap extends Component implements HasSize, HasStyle
 		}
 
     }
+
 
 	public void setTileLayer(final LTileLayer tl)
 	{

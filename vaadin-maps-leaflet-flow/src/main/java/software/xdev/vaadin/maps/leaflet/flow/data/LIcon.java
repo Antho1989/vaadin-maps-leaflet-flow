@@ -49,8 +49,8 @@ public class LIcon
 		this.setShadowSize(41, 41);
 		this.setShadowAnchor(12, 41);
 		this.setIconSize(25, 41);
-		this.iconUrl = "https://unpkg.com/leaflet@1.6.0/dist/images/marker-icon.png";
-		this.shadowUrl = "https://unpkg.com/leaflet@1.6.0/dist/images/marker-shadow.png";
+		this.iconUrl = "frontend/leaflet/images/marker-icon.png";
+		this.shadowUrl = "frontend/leaflet/images/marker-shadow.png";
 		this.type = "Icon";
 		
 	}
