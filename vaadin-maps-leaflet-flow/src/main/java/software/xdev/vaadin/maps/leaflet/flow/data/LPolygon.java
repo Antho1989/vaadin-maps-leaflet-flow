@@ -34,7 +34,7 @@ public class LPolygon extends LEvented
 {
 	private final LPolygonGeometry geometry;
 	private final LPolygonOptions properties;
-
+	final static  ObjectMapper mapper = new ObjectMapper();
 	public LPolygon(final LPoint... points)
 	{
 		final List<List<Double>> posis = new ArrayList<>();
@@ -287,7 +287,7 @@ public class LPolygon extends LEvented
 	public JsonObject toJson()
 	{
 		final JsonObject jsonObject = Json.createObject();
-		final ObjectMapper mapper = new ObjectMapper();
+
 		try
 		{
 			jsonObject.put("type", Json.create("Feature"));

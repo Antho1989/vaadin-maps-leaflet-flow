@@ -34,6 +34,7 @@ public class LCircle implements LComponent
 	
 	private LPoint geometry;
 	private LPolygonOptions properties;
+	final static ObjectMapper mapper = new ObjectMapper();
 	
 	/**
 	 * Creates a new circle
@@ -307,7 +308,7 @@ public class LCircle implements LComponent
 	public JsonObject toJson()
 	{
 		final JsonObject jsonObject = Json.createObject();
-		final ObjectMapper mapper = new ObjectMapper();
+
 		try
 		{
 			jsonObject.put("type", Json.create("Feature"));

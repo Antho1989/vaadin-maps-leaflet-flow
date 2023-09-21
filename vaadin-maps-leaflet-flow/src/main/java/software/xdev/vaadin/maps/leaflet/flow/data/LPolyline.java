@@ -30,6 +30,7 @@ import java.util.List;
 
 public class LPolyline extends LEvented
 {
+	final static ObjectMapper mapper = new ObjectMapper();
 	private final LPolygonGeometry geometry;
 	private final LPolygonOptions properties;
 
@@ -289,7 +290,7 @@ public class LPolyline extends LEvented
 	public JsonObject toJson()
 	{
 		final JsonObject jsonObject = Json.createObject();
-		final ObjectMapper mapper = new ObjectMapper();
+
 		try
 		{
 			jsonObject.put("type", Json.create("Feature"));

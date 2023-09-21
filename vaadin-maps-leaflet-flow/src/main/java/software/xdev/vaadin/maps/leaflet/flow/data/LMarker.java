@@ -31,6 +31,7 @@ public class LMarker extends LEvented
 {
 
 	private static final String MARKER_TYPE = "Point";
+	final static ObjectMapper mapper = new ObjectMapper();
 	private LMarkerGeometry geometry;
 	private LMarkerOptions properties;
 	/**
@@ -148,8 +149,9 @@ public class LMarker extends LEvented
 	@Override
 	public JsonObject toJson()
 	{
+
 		final JsonObject jsonObject = Json.createObject();
-		final ObjectMapper mapper = new ObjectMapper();
+
 		try
 		{
 			jsonObject.put("type", Json.create("Feature"));
