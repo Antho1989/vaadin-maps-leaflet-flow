@@ -24,7 +24,8 @@ public class LMarkerOptions
 {
 	private String popup;
 	private LIcon icon;
-	
+	private String tooltip;
+
 	public LMarkerOptions()
 	{
 		this.icon = new LIcon();
@@ -48,5 +49,15 @@ public class LMarkerOptions
 	public void setPopup(final String popup)
 	{
 		this.popup = popup;
+	}
+
+	public String getTooltip()
+	{
+		return tooltip;
+	}
+
+	public void setTooltip(String tooltip)
+	{
+		this.tooltip = tooltip;
 	}
 }

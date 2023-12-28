@@ -7,7 +7,7 @@
 	<groupId>com.xdev-software</groupId>
 	<artifactId>vaadin-maps-leaflet-flow-demo</artifactId>
 	<version>1.4.2-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<name>Vaadin Maps Leaflet Flow Demo</name>
 
@@ -39,18 +39,26 @@
 		<failOnMissingWebXml>false</failOnMissingWebXml>
 
 		<!-- Dependency-Versions -->
-		<vaadin.version>14.8.14</vaadin.version>
+		<spring-boot.version>3.1.5</spring-boot.version>
+		<vaadin.version>24.2.3</vaadin.version>
 	</properties>
 
 
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>com.vaadin</groupId>
-				<artifactId>vaadin-bom</artifactId>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring-boot.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.vaadin</groupId>
+				<artifactId>vaadin-bom</artifactId>
 				<version>${vaadin.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -58,7 +66,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-core</artifactId>
+			<artifactId>vaadin-spring-boot-starter</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.xdev-software</groupId>
@@ -75,14 +83,17 @@
 		<finalName>${project.artifactId}</finalName>
 
 		<plugins>
-			<!-- Jetty plugin for easy testing without a server -->
 			<plugin>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-				<version>9.4.48.v20220622</version>
-				<configuration>
-					<scanIntervalSeconds>1</scanIntervalSeconds>
-				</configuration>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>com.vaadin</groupId>

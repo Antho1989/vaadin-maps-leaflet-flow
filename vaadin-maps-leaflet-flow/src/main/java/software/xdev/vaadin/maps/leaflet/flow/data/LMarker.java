@@ -136,6 +136,21 @@ public class LMarker extends LEvented
 		this.properties.setPopup(popup);
 	}
 
+	public String getTooltip()
+	{
+		return this.properties.getTooltip();
+	}
+
+	/**
+	 * Sets a Tooltip to the Marker
+	 *
+	 * @param tooltip
+	 */
+	public void setTooltip(String tooltip)
+	{
+		this.properties.setTooltip(tooltip);
+	}
+
 	public String getTag()
 	{
 		return this.tag;
