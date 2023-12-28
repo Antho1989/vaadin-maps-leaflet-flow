@@ -1,11 +1,10 @@
-
 package software.xdev.vaadin.maps.leaflet.flow.data;
 
 /*-
  * #%L
- * vaadin-maps-leaflet-flow
+ * LeafletMap for Vaadin
  * %%
- * Copyright (C) 2019 XDEV Software
+ * Copyright (C) 2019 - 2022 XDEV Software
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,13 +28,13 @@ import elemental.json.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class LPolygon extends LEvented
+public class LPolyline extends LEvented
 {
+	final static ObjectMapper mapper = new ObjectMapper();
 	private final LPolygonGeometry geometry;
 	private final LPolygonOptions properties;
-	final static  ObjectMapper mapper = new ObjectMapper();
-	public LPolygon(final LPoint... points)
+
+	public LPolyline(final LPoint... points)
 	{
 		final List<List<Double>> posis = new ArrayList<>();
 		this.properties = new LPolygonOptions();
@@ -43,15 +42,15 @@ public class LPolygon extends LEvented
 		{
 			posis.add(p.getCoords());
 		}
-		this.geometry = new LPolygonGeometry("Polygon", posis);
+		this.geometry = new LPolygonGeometry("Polyline", posis);
 	}
 
 	/**
-	 * Create a new Polygon for marking a area on the map
+	 * Create a new Polyline
 	 *
-	 * @param points List of points to draw the Polygon
+	 * @param points List of points to draw the Polyline
 	 */
-	public LPolygon(final List<LPoint> points)
+	public LPolyline(final List<LPoint> points)
 	{
 		final List<List<Double>> posis = new ArrayList<>();
 		for (final LPoint p : points)
@@ -60,7 +59,11 @@ public class LPolygon extends LEvented
 		}
 
 		this.properties = new LPolygonOptions();
-		this.geometry = new LPolygonGeometry("Polygon", posis);
+		this.geometry = new LPolygonGeometry("Polyline", posis);
+	}
+
+	public void setOffset(int offset){
+		this.properties.setOffset(offset);
 	}
 
 	public boolean isStroke()
@@ -305,7 +308,7 @@ public class LPolygon extends LEvented
 	@Override
 	public String getJsFunctionForAddingToMap()
 	{
-		return "addPolygon";
+		return "addPolyline";
 	}
 
 }

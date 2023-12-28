@@ -1,4 +1,3 @@
-
 package software.xdev.vaadin.maps.leaflet.flow;
 
 /*-
@@ -21,97 +20,126 @@ package software.xdev.vaadin.maps.leaflet.flow;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import com.vaadin.flow.component.ClientCallable;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.ComponentUtil;
-import com.vaadin.flow.component.HasSize;
-import com.vaadin.flow.component.HasStyle;
-import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.shared.Registration;
+import software.xdev.vaadin.maps.leaflet.flow.data.*;
+import software.xdev.vaadin.maps.leaflet.flow.event.ClickLEvent;
+import software.xdev.vaadin.maps.leaflet.flow.event.LEvent;
 
-import software.xdev.vaadin.maps.leaflet.flow.data.LCenter;
-import software.xdev.vaadin.maps.leaflet.flow.data.LComponent;
-import software.xdev.vaadin.maps.leaflet.flow.data.LTileLayer;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
-
-@NpmPackage(value = "leaflet", version = "^1.6.0")
 @Tag("leaflet-map")
+@JsModule("./leaflet/leaflet.js")
 @JsModule("./leaflet/leafletCon.js")
 public class LMap extends Component implements HasSize, HasStyle
 {
 	private static final String SET_VIEW_POINT_FUNCTION = "setViewPoint";
-		
+
 	private static final String DELETE_FUNCTION = "deleteItem";
 	private static final String TILE_LAYER_FUNCTION = "setTileLayer";
 	private static final String SET_ZOOM_FUNCTION = "setZoomLevel";
-	
+	private static final String ZOOM_TO_EXTENT_FUNCTION = "zoomToExtent";
+
 	private LCenter center;
-	private final List<LComponent> components = new ArrayList<>();
-	
+
+	private final Map<Integer, LComponent> components = new HashMap<>();
+	private final Map<LComponent, Integer> componentIds = new HashMap<>();
+
+	private final AtomicInteger nextComponentId = new AtomicInteger(1);
+
 	public LMap(final double lat, final double lon, final int zoom)
 	{
 		this.center = new LCenter(lat, lon, zoom);
 		this.setViewPoint(this.center);
 		this.setFixZIndexEnabled(true);
 	}
-	
-	/**
-	 * @deprecated Just used for demo purposes
-	 */
-	@Deprecated
-	public LMap()
-	{
-		this(50.921273, 10.359164, 6);
-	}
-	
+
 	public void setZoom(final int zoom)
 	{
 		this.getElement().callJsFunction(SET_ZOOM_FUNCTION, zoom);
 	}
-	
+
 	public void setViewPoint(final LCenter viewpoint)
 	{
 		this.getElement().callJsFunction(SET_VIEW_POINT_FUNCTION, viewpoint.toJson());
 	}
-	
+    
+	public void zoomToExtent(final LBounds bounds)
+	{
+		if (bounds == null){
+			setCenter(new LCenter(0, 0, 1));
+			return;
+		}
+        if (Math.abs(bounds.getMaxLat() - bounds.getMinLat()) <= 0.0001
+				&& Math.abs(bounds.getMaxLng() - bounds.getMinLng()) <= 0.001) {
+            setCenter(new LCenter(bounds.getMaxLat(), bounds.getMaxLng(), 17));
+		} else {
+			this.getElement().callJsFunction(ZOOM_TO_EXTENT_FUNCTION, bounds.toJson());
+		}
+
+    }
+
+
 	public void setTileLayer(final LTileLayer tl)
 	{
 		this.getElement().callJsFunction(TILE_LAYER_FUNCTION, tl.toJson());
 	}
-	
+
 	/**
 	 * This fixes situations where the leafletmap overlays components like Dialogs
-	 * 
-	 * @param enabled
-	 *            enable or disable the fix
+	 *
+	 * @param enabled enable or disable the fix
 	 */
 	protected void setFixZIndexEnabled(final boolean enabled)
 	{
 		this.getStyle().set("z-index", enabled ? "1" : null);
 	}
-	
-	/**
-	 * add Leaflet component(s) to the map
-	 *
-	 * @param lObjects
-	 * 
-	 * @deprecated Use {@link LMap#addLComponents(LComponent...)} instead
-	 */
-	@Deprecated
-	public void addLComponent(final LComponent... lObjects)
+
+	public boolean containsLComponent(final LComponent lComponent)
 	{
-		this.addLComponents(lObjects);
+		return componentIds.containsKey(lComponent);
 	}
-	
+
+	private int addComponent(final LComponent lComponent)
+	{
+		if (componentIds.containsKey(lComponent))
+			throw new IllegalArgumentException("Component already added to this map");
+
+		final int id = nextComponentId.getAndIncrement();
+		components.put(id, lComponent);
+		componentIds.put(lComponent, id);
+		return id;
+	}
+
+	private int removeComponent(final LComponent lComponent)
+	{
+		if (!containsLComponent(lComponent))
+			throw new IllegalArgumentException("Component not in this map");
+
+		final int id = componentIds.remove(lComponent);
+		components.remove(id);
+		return id;
+	}
+
+	private int getComponentId(final LComponent lComponent)
+	{
+		if (!containsLComponent(lComponent))
+			throw new IllegalArgumentException("Component not in this map");
+
+		return componentIds.get(lComponent);
+	}
+
+	private LComponent getComponentById(final int id)
+	{
+		return components.get(id);
+	}
+
 	/**
 	 * add Leaflet component(s) to the map
 	 *
@@ -121,7 +149,7 @@ public class LMap extends Component implements HasSize, HasStyle
 	{
 		this.addLComponents(Arrays.asList(lComponents));
 	}
-	
+
 	/**
 	 * add Leaflet components to the map
 	 *
@@ -129,32 +157,21 @@ public class LMap extends Component implements HasSize, HasStyle
 	 */
 	public void addLComponents(final Collection<LComponent> lComponents)
 	{
-		for(final LComponent lComponent : lComponents)
+		for (final LComponent lComponent : lComponents)
 		{
 			this.addLComponent(lComponent);
 		}
 	}
-	
+
 	protected void addLComponent(final LComponent lComponent)
 	{
-		this.getComponents().add(lComponent);
-		this.getElement().callJsFunction(lComponent.getJsFunctionForAddingToMap(), lComponent.toJson());
+		this.getElement().callJsFunction(
+				lComponent.getJsFunctionForAddingToMap(),
+				addComponent(lComponent),
+				lComponent.toJson()
+		);
 	}
-	
-	/**
-	 * Removes a map item
-	 *
-	 * @param items
-	 * 
-	 * @deprecated Use {@link LMap#removeComponents(LComponent...)}
-	 */
-	@Deprecated
-	public void removeItem(final LComponent... items)
-	{
-		this.removeLComponents(items);
-	}
-	
-	
+
 	/**
 	 * remove Leaflet component(s) to the map
 	 *
@@ -164,7 +181,7 @@ public class LMap extends Component implements HasSize, HasStyle
 	{
 		this.removeLComponents(Arrays.asList(lComponents));
 	}
-	
+
 	/**
 	 * remove Leaflet components to the map
 	 *
@@ -172,48 +189,22 @@ public class LMap extends Component implements HasSize, HasStyle
 	 */
 	public void removeLComponents(final Collection<LComponent> lComponents)
 	{
-		for(final LComponent lComponent : lComponents)
+		for (final LComponent lComponent : lComponents)
 		{
 			this.removeLComponent(lComponent);
 		}
 	}
-	
+
 	protected void removeLComponent(final LComponent lComponent)
 	{
-		final int index = this.components.indexOf(lComponent);
-		
-		if(index != -1 && this.components.remove(lComponent))
-		{
-			this.getElement().callJsFunction(DELETE_FUNCTION, index);
-		}
+		this.getElement().callJsFunction(DELETE_FUNCTION, removeComponent(lComponent));
 	}
-	
-	/**
-	 * 
-	 * @return
-	 * 
-	 * @deprecated Use {@link LMap#getComponents()}
-	 */
-	@Deprecated
-	public List<LComponent> getItems()
-	{
-		return this.components;
-	}
-	
-	/**
-	 * Returns a new component list
-	 * @return
-	 */
-	public List<LComponent> getComponents()
-	{
-		return this.components;
-	}
-	
+
 	public LCenter getCenter()
 	{
 		return this.center;
 	}
-	
+
 	/**
 	 * Starting Point of the map with latitude, longitude and zoom level
 	 *
@@ -225,31 +216,86 @@ public class LMap extends Component implements HasSize, HasStyle
 		this.setViewPoint(start);
 	}
 	
+	public void invalidateSize() {
+		this.getElement().executeJs("this.map.invalidateSize()");
+	}
 	
 	@ClientCallable
-	protected void onMarkerClick(final String tag)
-	{
-		ComponentUtil.fireEvent(this, new MarkerClickEvent(this, true, tag));
+	protected void onMapCenterChanged(final double lat, final double lng, final int zoom) {
+		this.center = new LCenter(lat, lng, zoom);
 	}
-	
-	public Registration addMarkerClickListener(final ComponentEventListener<MarkerClickEvent> listener)
+
+
+	@ClientCallable
+	protected void onMapClick(final double lat, final double lng)
 	{
-		return ComponentUtil.addListener(this, MarkerClickEvent.class, listener);
+		ComponentUtil.fireEvent(this, new MapClickEvent(this, true, lat, lng));
 	}
-	
-	public class MarkerClickEvent extends ComponentEvent<LMap>
+
+	public Registration addMapClickListener(final ComponentEventListener<MapClickEvent> listener)
 	{
-		private final String tag;
-		
-		public MarkerClickEvent(final LMap source, final boolean fromClient, final String tag)
+		return ComponentUtil.addListener(this, MapClickEvent.class, listener);
+	}
+
+	public static class MapClickEvent extends ComponentEvent<LMap>
+	{
+		private final double lat;
+		private final double lng;
+
+		public MapClickEvent(final LMap source, final boolean fromClient, final double lat, final double lng)
 		{
 			super(source, fromClient);
-			this.tag = tag;
+			this.lat = lat;
+			this.lng = lng;
 		}
-		
-		public String getTag()
+
+		public double getLat()
 		{
-			return this.tag;
+			return lat;
+		}
+
+		public double getLng()
+		{
+			return lng;
 		}
 	}
+
+	@ClientCallable
+	protected void onComponentEvent(final int id, final String type)
+	{
+		final LComponent c = getComponentById(id);
+
+		if (c == null)
+		{
+			throw new IllegalArgumentException("Component not in map");
+		}
+		if (!(c instanceof LEvented))
+		{
+			throw new IllegalArgumentException("Component not Evented");
+		}
+
+		final LEvented source = (LEvented) c;
+		final LEvent event;
+
+		if ("click".equals(type))
+		{
+			event = new ClickLEvent(source, true);
+		}
+		else
+		{
+			throw new IllegalArgumentException("Unknown event type '" + type + "'");
+		}
+
+		source.fireEvent(event);
+	}
+
+	/**
+	 * Opens the popup of the given {@link LMarker}, if the map contains
+	 * the marker.
+	 */
+	public void openPopup(LMarker marker)
+	{
+		this.getElement().callJsFunction("openPopup", getComponentId(marker));
+	}
+
 }

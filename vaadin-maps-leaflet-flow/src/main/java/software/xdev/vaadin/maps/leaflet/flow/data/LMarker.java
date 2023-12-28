@@ -23,15 +23,15 @@ package software.xdev.vaadin.maps.leaflet.flow.data;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import elemental.json.Json;
 import elemental.json.JsonObject;
 
 
-public class LMarker implements LComponent
+public class LMarker extends LEvented
 {
 
 	private static final String MARKER_TYPE = "Point";
+	final static ObjectMapper mapper = new ObjectMapper();
 	private LMarkerGeometry geometry;
 	private LMarkerOptions properties;
 	/**
@@ -149,8 +149,9 @@ public class LMarker implements LComponent
 	@Override
 	public JsonObject toJson()
 	{
+
 		final JsonObject jsonObject = Json.createObject();
-		final ObjectMapper mapper = new ObjectMapper();
+
 		try
 		{
 			jsonObject.put("type", Json.create("Feature"));
@@ -159,7 +160,7 @@ public class LMarker implements LComponent
 			jsonObject.put("tag", Json.create(this.tag));
 
 		}
-		catch(final JsonProcessingException e)
+		catch (final JsonProcessingException e)
 		{
 			throw new RuntimeException(e);
 		}
