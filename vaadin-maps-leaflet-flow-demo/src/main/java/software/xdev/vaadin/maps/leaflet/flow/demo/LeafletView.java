@@ -221,6 +221,7 @@ public class LeafletView extends VerticalLayout
 
 		this.markerPizza = new LMarker(49.674413, 12.160925);
 		this.markerPizza.setPopup("Pizza!");
+		this.markerPizza.setTooltip("Pizza?");
 
 		this.markerKebab = new LMarker(49.673026, 12.156278);
 		this.markerKebab.setPopup("Kebab!");
