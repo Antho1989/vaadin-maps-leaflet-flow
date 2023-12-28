@@ -124,6 +124,10 @@ export class LeafletMap extends PolymerElement {
 			item.bindPopup(obj.properties.popup, {closeButton: false});
 		}
 
+		if (!!obj.properties.tooltip) {
+			item.bindTooltip(obj.properties.tooltip, {closeButton: false});
+		}
+
 		this.addListenerToEvented(id, item);
 
 		this.items[id] = item;
