@@ -1,6 +1,18 @@
 # Changelog
 
-## Unreleased
+## 1.4.3
+
+### Fixed
+
+- Fixed `zoomToExtent` not working when called just after map is created
+
+## 1.4.2
+
+### Added
+
+- Added `LMarker` tooltip
+
+## 1.2.0 - 1.4.1
 
 ### Added
 
