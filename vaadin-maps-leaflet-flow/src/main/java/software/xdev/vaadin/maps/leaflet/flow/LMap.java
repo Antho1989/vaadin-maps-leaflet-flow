@@ -44,7 +44,6 @@ public class LMap extends Component implements HasSize, HasStyle
 	private static final String DELETE_FUNCTION = "deleteItem";
 	private static final String TILE_LAYER_FUNCTION = "setTileLayer";
 	private static final String SET_ZOOM_FUNCTION = "setZoomLevel";
-	private static final String ZOOM_TO_EXTENT_FUNCTION = "zoomToExtent";
 
 	private LCenter center;
 
@@ -80,7 +79,7 @@ public class LMap extends Component implements HasSize, HasStyle
 				&& Math.abs(bounds.getMaxLng() - bounds.getMinLng()) <= 0.001) {
             setCenter(new LCenter(bounds.getMaxLat(), bounds.getMaxLng(), 17));
 		} else {
-			this.getElement().callJsFunction(ZOOM_TO_EXTENT_FUNCTION, bounds.toJson());
+	        this.getElement().executeJs("setTimeout(() => this.map.fitBounds(" + bounds.toJson() + "), 1);");
 		}
 
     }

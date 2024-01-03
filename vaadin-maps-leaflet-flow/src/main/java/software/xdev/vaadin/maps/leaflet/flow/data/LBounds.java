@@ -20,11 +20,6 @@ package software.xdev.vaadin.maps.leaflet.flow.data;
  * #L%
  */
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import elemental.json.Json;
-import elemental.json.JsonObject;
-
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
@@ -120,15 +115,7 @@ public class LBounds implements Serializable
                 "]}";
     }
 
-    public JsonObject toJson() {
-        final JsonObject jsonObject = Json.createObject();
-        final ObjectMapper mapper = new ObjectMapper();
-        try {
-            jsonObject.put("bounds", Json.parse(mapper.writeValueAsString(this)));
-        } catch (final JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-        return jsonObject;
+    public String toJson() {
+        return "[[" + maxLat + "," + minLng + "], [" + minLat + "," + maxLng + "]]";
     }
 }
